@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div class="calculator">
+    <div class="result">0</div>
+    <div class="buttons">
+        <button class="button" id="reset">C</button>
+        <button class="button" id="rightBrace">(</button>
+        <button class="button" id="leftBrace">)</button>
+        <button class="button" id="coma">.</button>
+        <button class="button" id="multipale">X</button>
+
+
+
+         <button class="button" id="n8">8</button>
+        <button class="button" id="n9">9</button>
+        <button class="button" id="n0">0</button>
+        <button class="button" id="root">v</button>
+        <button class="button" id="division">/</button>
+
+         <button class="button" id="n5">5</button>
+        <button class="button" id="n6">6</button>
+        <button class="button" id="n7">7</button>
+        <button class="button" id="percent">%</button>
+        <button class="button" id="plus">+</button>
+
+
+        <button class="button" id="n3">3</button>
+        <button class="button" id="n4">4</button>
+        <button class="button" id="n5">5</button>
+        <button class="button" id="exp">x<sup>y</sup></button>
+        <button class="button" id="minus">-</button>
+                <button class="button" id="n1">1</button>
+        <button class="button" id="n2">2</button>
+        <button class="button" id="n3">3</button>
+        <button class="button equal"  id="equal">=</button>
+    </div>
+</div>
+
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const display = document.querySelector(".result");
+    const buttons = document.querySelectorAll(".button");
+
+    let currentExpression = "";
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const id = button.id;
+            const text = button.innerText.trim();
+
+            // 1. زر المسح (Reset / C)
+            if (id === "reset") {
+                currentExpression = "";
+                display.innerText = "0";
+                return;
+            }
+
+            // 2. زر النتيجة (=)
+            if (id === "equal") {
+                try {
+                    if (!currentExpression) return;
+
+                    // تحويل العلامات الرياضية إلى صيغة يفهما JavaScript
+                    let formattedExpression = currentExpression
+                        .replace(/X/g, "*")
+                        .replace(/%/g, "/100")
+                        .replace(/\^/g, "**")
+                        .replace(/√\(/g, "Math.sqrt(");
+
+                    // حساب النتيجة
+                    let result = eval(formattedExpression);
+
+                    // التعامل مع القسمة على صفر أو القيم غير المحددة
+                    if (result === Infinity || isNaN(result)) {
+                        display.innerText = "Error";
+                        currentExpression = "";
+                    } else {
+                        // إزالة الفواصل العشرية الطويلة
+                        result = Math.round(result * 1000000) / 1000000;
+                        display.innerText = result;
+                        currentExpression = result.toString();
+                    }
+                } catch (error) {
+                    display.innerText = "Error";
+                    currentExpression = "";
+                }
+                return;
+            }
+
+            // 3. زر الجذر التربيعي (√)
+            if (id === "root") {
+                if (display.innerText === "0" || display.innerText === "Error") {
+                    currentExpression = "√(";
+                } else {
+                    currentExpression += "√(";
+                }
+                display.innerText = currentExpression;
+                return;
+            }
+
+            // 4. زر الأس (x^y)
+            if (id === "exp") {
+                if (currentExpression !== "" && !display.innerText.includes("Error")) {
+                    currentExpression += "^";
+                    display.innerText = currentExpression;
+                }
+                return;
+            }
+
+            // 5. إضافة الأرقام والعمليات إلى الشاشة
+            if (display.innerText === "0" || display.innerText === "Error") {
+                currentExpression = text;
+            } else {
+                currentExpression += text;
+            }
+
+            display.innerText = currentExpression;
+        });
+    });
+});
+
+    </script>
+    
+</body>
+</html>
